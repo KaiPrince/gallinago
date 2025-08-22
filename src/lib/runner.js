@@ -80,6 +80,9 @@ class Runner {
       });
 
       this.childProcess.stdout.on('data', (data) => {
+        if (options.outputHandler && typeof options.outputHandler === 'function') {
+          options.outputHandler(data.toString('utf8'));
+        }
         if (this.enableStdOut) {
           console.log(data.toString('utf8'));
         }
