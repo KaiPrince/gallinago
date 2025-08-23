@@ -10,13 +10,13 @@
  * runCommand('test/fixtures/cli', 'test/fixtures')
  *
  */
-import chai from 'chai';
+import * as chai from 'chai';
 import fs from 'fs-extra';
 import path from 'path';
 import { Runner } from '../../../src/index.js';
 import { fileURLToPath, URL } from 'url';
 
-const expect = chai.expect;
+const { expect } = chai;
 
 describe('CLI Fixture', function() {
   const outputPath = fileURLToPath(new URL('./output/', import.meta.url));

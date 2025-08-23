@@ -6,11 +6,11 @@
  * Should export the expected intertface
  *
  */
-import chai from 'chai';
+import * as chai from 'chai';
 import { Runner } from '../../../src/index.js';
 import { Runner as packageMainRunner } from '../../../src/index.js';
 
-const expect = chai.expect;
+const { expect } = chai;
 
 describe('Package Main', function() {
 

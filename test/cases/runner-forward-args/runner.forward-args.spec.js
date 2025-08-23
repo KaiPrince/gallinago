@@ -11,13 +11,13 @@
  * runCommand('cli.js')
  *
  */
-import chai from 'chai';
+import * as chai from 'chai';
 import fs from 'fs-extra';
 import path from 'path';
 import { Runner } from '../../../src/index.js';
 import { fileURLToPath, URL } from 'url';
 
-const expect = chai.expect;
+const { expect } = chai;
 
 describe('Forward Parent Args', function() {
   const currentPath = fileURLToPath(new URL('.', import.meta.url));

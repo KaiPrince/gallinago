@@ -10,13 +10,13 @@
  * runCommand('test/fixtures/cliiiii')
  *
  */
-import chai from 'chai';
+import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'path';
 import { Runner } from '../../../src/index.js';
 
 chai.use(chaiAsPromised);
-const expect = chai.expect;
+const { expect } = chai;
 
 describe('CLI Error Handling', function() {
 
