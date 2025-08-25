@@ -61,8 +61,8 @@ describe('CLI Fixture w/debug (stdOut) enabled', function() {
       expect(consoleFake).to.have.been.calledOnceWithExactly(testString);
     });
 
-    after(function() {
-      runner.teardown([
+    after(async function() {
+      await runner.teardown([
         path.join(outputPath)
       ]);
     });
