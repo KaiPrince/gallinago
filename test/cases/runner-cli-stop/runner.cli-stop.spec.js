@@ -65,8 +65,8 @@ describe('Server Fixture for Manual Process Stop', function() {
       runner.stopCommand();
     });
 
-    after(function() {
-      runner.teardown([
+    after(async function() {
+      await runner.teardown([
         path.join(outputPath)
       ]);
     });

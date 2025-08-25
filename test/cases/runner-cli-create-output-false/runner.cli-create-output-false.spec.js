@@ -28,7 +28,7 @@ describe('CLI Fixture', function() {
       runner.setup(outputPath, null, { create: false });
     });
 
-    it('should have created the output folder', function() {
+    it('should not have created the output folder', function() {
       const exists = fs.existsSync(outputPath);
 
       expect(exists).to.be.equal(false);

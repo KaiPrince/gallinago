@@ -10,12 +10,14 @@
  * runCommand('test/fixtures/cli', 'test/fixtures')
  *
  */
-import fs from 'fs-extra';
 import * as chai from 'chai';
 import path from 'path';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
 import { Runner } from '../../../src/index.js';
 import { fileURLToPath, URL } from 'url';
 
+chai.use(sinonChai);
 const { expect } = chai;
 
 describe('CLI Fixture w/debug (stdOut) enabled', function() {
@@ -25,41 +27,42 @@ describe('CLI Fixture w/debug (stdOut) enabled', function() {
   describe('default options with relative path', function() {
     let runner;
 
-    before(function() {
-      runner = new Runner();
-      runner.setup(outputPath);
-      runner.runCommand(
-        `${fixturesPath}/cli.js`, // binPath
-        fixturesPath // args
+    before(async function() {
+      runner = new Runner(true);
+    });
+
+    it('should write to console.log', async function() {
+      const testString = 'TEST';
+      const consoleFake = sinon.fake();
+      sinon.replace(console, 'log', consoleFake);
+
+      await runner.runCommand(
+        `${fixturesPath}/cli-write-to-stdout.js`,
+        null,
+        { async: true }
       );
+
+      expect(consoleFake).to.have.been.calledOnceWithExactly(testString);
     });
 
-    it('should have created the output folder', function() {
-      const exists = fs.existsSync(outputPath);
+    it('should write stderr to console.log', async function () {
+      const testString = 'TEST ERROR';
+      const consoleFake = sinon.fake();
+      sinon.replace(console, 'error', consoleFake);
 
-      expect(exists).to.be.equal(true);
+      await expect(
+        runner.runCommand(
+          path.join(process.cwd(), 'test/fixtures/cli-write-to-stderr.js'),
+          null,
+          { async: true }
+        )
+      ).to.be.rejectedWith(testString);
+
+      expect(consoleFake).to.have.been.calledOnceWithExactly(testString);
     });
 
-    it('should only copy 3 files', function() {
-      const files = fs.readdirSync(outputPath);
-
-      expect(files.length).to.be.equal(3);
-    });
-
-    it('should have an .editorconfig file', function() {
-      expect(fs.existsSync(`${outputPath}/.editorconfig`)).to.be.equal(true);
-    });
-
-    it('should have an .eslintrc file', function() {
-      expect(fs.existsSync(`${outputPath}/.eslintrc.cjs`)).to.be.equal(true);
-    });
-
-    it('should have .mocharc file', function() {
-      expect(fs.existsSync(`${outputPath}/.mocharc.cjs`)).to.be.equal(true);
-    });
-
-    after(function() {
-      runner.teardown([
+    after(async function() {
+      await runner.teardown([
         path.join(outputPath)
       ]);
     });

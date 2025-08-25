@@ -12,10 +12,14 @@
  */
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import fs from 'fs';
 import path from 'path';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
 import { Runner } from '../../../src/index.js';
 
 chai.use(chaiAsPromised);
+chai.use(sinonChai);
 const { expect } = chai;
 
 describe('CLI Error Handling', function() {
@@ -52,6 +56,26 @@ describe('CLI Error Handling', function() {
         'Error: Child process throwing a Promise.reject to the parent.'
       );
     });
+
+    for (const withSetup of [true, false]) {
+      it('should throw and log to console when teardown fails', async function() {
+        const testString = 'TEST';
+        const testError = new Error(testString);
+        const consoleFake = sinon.fake();
+        sinon.replace(console, 'log', consoleFake);
+        sinon.replace(fs, 'existsSync', sinon.fake.throws(testError));
+        const runner = new Runner();
+        
+        if (withSetup) {
+          runner.setup(process.cwd(), ["fake-file-name.txt"]);
+        } else {
+          runner.setupFiles = null;
+        }
+        await expect(runner.teardown(['fake-file-name.txt'])).to.be.rejectedWith(testString);
+
+        expect(consoleFake).to.have.been.calledOnceWithExactly(testError);
+      });
+    }
   });
 
 });
