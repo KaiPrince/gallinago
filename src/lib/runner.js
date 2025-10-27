@@ -70,7 +70,7 @@ class Runner {
       });
 
       this.childProcess.stderr.on('data', (data) => {
-        err = data.toString('utf8');
+        err += data.toString('utf8');
         if (this.enableStdOut) {
           console.error(err);
         }
